@@ -40,7 +40,7 @@ test("Test getting the list of clients for a Realm that doesn't exist", (t) => {
     const realmName = 'notarealrealm';
 
     client.clients.find(realmName).catch((err) => {
-      t.equal(err, 'Realm not found.', "Realm not found should be returned if the realm wasn't found");
+      t.equal(err.statusCode, 404, "Realm not found should be returned if the realm wasn't found");
       t.end();
     });
   });
@@ -90,7 +90,7 @@ test("Test getting the one client for a Realm - client id doesn't exist", (t) =>
     const id = 'not-an-id';
 
     client.clients.find(realmName, {id: id}).catch((err) => {
-      t.equal(err, 'Could not find client', 'A Client not found error should be thrown');
+      t.equal(err.statusCode, 404, 'A Client not found error should be thrown');
       t.end();
     });
   });
@@ -112,8 +112,8 @@ test('Test create a Client', (t) => {
     client.clients.create(realmName, newClient).then((addedClient) => {
       t.equal(addedClient.clientId, newClient.clientId, 'The clientId should be named ' + newClient.clientId);
       t.equal(addedClient.description, newClient.description, 'The description should be named ' + newClient.description);
-      t.end();
     });
+    t.end();
   });
 });
 
@@ -129,7 +129,7 @@ test('Test create a Client - a not unique clientId', (t) => {
 
   kca.then((client) => {
     client.clients.create(realmName, newClient).catch((err) => {
-      t.equal(err.errorMessage, 'Client admin-cli already exists', 'Error message should be returned when using a non-unique clientId');
+      t.equal(err.statusCode, 409, 'Error message should be returned when using a non-unique clientId');
       t.end();
     });
   });
@@ -192,7 +192,7 @@ test('Test update a client info - same client id error', (t) => {
     testClient.id = '09701f0c-db23-4b88-96d5-e35e4f766613';
 
     client.clients.update(realmName, testClient).catch((err) => {
-      t.equal(err.errorMessage, 'Client update me already exists', 'Should return an error message');
+      t.equal(err.statusCode, 409, 'Should return an error message');
       t.end();
     });
   });
@@ -221,7 +221,7 @@ test('Test update a client info - same clientId(really the name of the client) e
     testClient.clientId = 'use for duplicate';
 
     client.clients.update(realmName, testClient).catch((err) => {
-      t.equal(err.errorMessage, 'Client use for duplicate already exists', 'Should return an error message');
+      t.equal(err.statusCode, 409, 'Should return an error message');
       t.end();
     });
   });
@@ -250,8 +250,7 @@ test('Test update a client info - update a user that does not exist', (t) => {
     testClient.id = 'f9ea108b-a748-435f-9058-dab46ce5977-not-real';
 
     client.clients.update(realmName, testClient).catch((err) => {
-      console.log(err);
-      t.equal(err, 'Could not find client', 'Should return an error that no client is found');
+      t.equal(err.statusCode, 404, 'Should return an error that no client is found');
       t.end();
     });
   });
@@ -268,6 +267,10 @@ test('Test delete a client', (t) => {
     const id = 'd8c51041-84c7-4e76-901d-401e73eb1666';
 
     client.clients.remove(realmName, id).then(() => {
+    });
+
+    client.clients.find(realmName, {id: id}).catch((err) => {
+      t.equal(err.statusCode, 404, 'A Client not found error should be thrown');
       t.end();
     });
   });
@@ -278,10 +281,11 @@ test("Test delete a client that doesn't exist", (t) => {
 
   const id = 'not-a-real-id';
   const realmName = 'master';
+
   kca.then((client) => {
     // Call the deleteRealm api to remove this realm
     client.clients.remove(realmName, id).catch((err) => {
-      t.equal(err, 'Could not find client', 'Should return an error that no user is found');
+      t.equal(err.statusCode, 404, 'Should return an error that no user is found');
       t.end();
     });
   });
