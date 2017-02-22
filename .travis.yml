@@ -15,8 +15,5 @@ after_script:
   - ./scripts/stop-server.sh
 notifications:
   irc: "irc.freenode.org#brass-monkey"
-branches:
-  only:
-    - master
 after_success:
   - cat ./coverage/lcov.info | coveralls
