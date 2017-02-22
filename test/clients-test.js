@@ -267,6 +267,7 @@ test('Test delete a client', (t) => {
     const id = 'd8c51041-84c7-4e76-901d-401e73eb1666';
 
     client.clients.remove(realmName, id).then(() => {
+      t.end();
     });
 
     client.clients.find(realmName, {id: id}).catch((err) => {

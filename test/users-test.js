@@ -165,7 +165,7 @@ test('Test delete a user', (t) => {
     const userId = '677e99fd-b854-479f-afa6-74f295052770';
 
     client.users.remove(realmName, userId).then(() => {
-      // Do nothing
+      t.end();
     });
 
     client.users.find(realmName, {userId: userId}).catch((err) => {
