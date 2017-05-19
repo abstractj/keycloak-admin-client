@@ -438,3 +438,17 @@ test('Test retrive an installation from existing client', (t) => {
     });
   });
 });
+
+test("Test retrive an installation from a client that doesn't exist", (t) => {
+  const kca = keycloakAdminClient(settings);
+
+  return kca.then((client) => {
+    // Use the master realm
+    const realmName = 'master';
+    const clientId = '58598d22-9592-4eec-819a-d6d91a6a1153';
+
+    return t.shouldFail(client.clients.installation(realmName, clientId), 'Could not find client', 'Should return an error that no client is found');
+  });
+});
+
+
