@@ -420,3 +420,21 @@ test('Test create a client role - a non-unique role name', (t) => {
     });
   });
 });
+
+test('Test retrive an installation from existing client', (t) => {
+  const kca = keycloakAdminClient(settings);
+  return kca.then((client) => {
+    // Use the master realm
+    const realmName = 'master';
+    const options = {
+      clientId: 'admin-cli'
+    };
+
+    return client.clients.find(realmName, options).then((listOfClients) => {
+      client.clients.installation(realmName, listOfClients[0].id)
+        .then((installation) => {
+          return t.equal(installation.resource, listOfClients[0].clientId, `The resource should be named ${listOfClients[0].clientId}`);
+        });
+    });
+  });
+});
