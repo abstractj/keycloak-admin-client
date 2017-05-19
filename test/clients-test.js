@@ -466,5 +466,3 @@ test('Test retrive an installation from a realm that does not exist', (t) => {
     });
   });
 });
-
-
