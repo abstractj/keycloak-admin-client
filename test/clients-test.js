@@ -451,7 +451,6 @@ test('Test retrive an installation from a client that does not exist', (t) => {
   });
 });
 
-
 test('Test retrive an installation from a realm that does not exist', (t) => {
   const kca = keycloakAdminClient(settings);
   return kca.then((client) => {
